@@ -14,3 +14,14 @@ h1{margin:0 0 12px;font-size:20px}
 .delete-btn{background:#fee2e2;color:#b91c1c;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}
 .delete-btn:focus{outline:2px solid #fca5a5}
 @media (max-width:420px){.app{padding:14px}#todo-form button{padding:8px 10px}}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+#theme-toggle{padding:8px 10px;border-radius:6px;border:1px solid #e6e8f0;background:transparent;cursor:pointer}
+
+body.dark{background:#0f1724;color:#e6eef8}
+body.dark .app{background:#071127;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+body.dark #todo-input{border-color:#1f2937;background:transparent;color:#e6eef8}
+body.dark .todo-item{border-color:#111827;background:#071127}
+body.dark .todo-text.completed{color:#94a3b8;opacity:0.9}
+body.dark #todo-form button{background:#2563eb}
+body.dark .delete-btn{background:#3f1b1b;color:#fecaca;border:none}

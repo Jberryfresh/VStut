@@ -4,6 +4,37 @@
   const list = document.getElementById('todo-list');
   const STORAGE_KEY = 'simple_todos_v1';
 
+  const THEME_KEY = 'theme_pref_v1';
+
+  function applyTheme(theme){
+    if(theme === 'dark') document.body.classList.add('dark');
+    else document.body.classList.remove('dark');
+  }
+
+  function loadTheme(){
+    try{
+      const t = localStorage.getItem(THEME_KEY);
+      if(t) return t;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }catch(e){
+      return 'light';
+    }
+  }
+
+  function saveTheme(theme){
+    try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
+  }
+
+  function toggleTheme(){
+    const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
+    applyTheme(newTheme);
+    saveTheme(newTheme);
+  }
+
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  applyTheme(loadTheme());
+  if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+
   function loadTodos(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
