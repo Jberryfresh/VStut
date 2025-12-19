@@ -124,7 +124,13 @@
     const del = e.target.closest('button.delete-btn');
     if(del){
       const id = del.dataset.id;
-      if(id) deleteTodo(id);
+      const li = del.closest('li.todo-item');
+      if(li){
+        li.classList.add('removing');
+        setTimeout(() => { if(id) deleteTodo(id); }, 260);
+      } else {
+        if(id) deleteTodo(id);
+      }
       return;
     }
     const cb = e.target.closest('input.todo-checkbox');

@@ -1,27 +1,57 @@
+:root{
+	--bg: linear-gradient(180deg,#f7fbff 0%, #eef3ff 100%);
+	--page-bg: #f6f8fb;
+	--card: #ffffff;
+	--muted: #6b7280;
+	--text: #0f1724;
+	--accent: #2563eb;
+	--accent-2: #6d28d9;
+	--danger: #ef4444;
+	--glass-shadow: 0 8px 30px rgba(16,24,40,0.08);
+	--radius: 14px;
+}
+
 *{box-sizing:border-box}
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;line-height:1.4;background:#f6f7fb;color:#111;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
-.app{width:100%;max-width:520px;background:#fff;border-radius:8px;padding:20px;box-shadow:0 6px 20px rgba(16,24,40,0.08)}
-h1{margin:0 0 12px;font-size:20px}
-#todo-form{display:flex;gap:8px;margin-bottom:12px}
-#todo-input{flex:1;padding:10px 12px;border:1px solid #e6e8f0;border-radius:6px;font-size:14px}
-#todo-form button{padding:10px 14px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
-#todo-form button:active{opacity:0.95}
+body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;line-height:1.5;background:var(--page-bg);color:var(--text);display:flex;min-height:100vh;align-items:center;justify-content:center;padding:36px}
+
+.app{width:100%;max-width:720px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));border-radius:var(--radius);padding:28px;box-shadow:var(--glass-shadow);backdrop-filter:blur(4px)}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.title-group h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.subtitle{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+#todo-form{display:flex;gap:12px;margin-bottom:18px}
+#todo-input{flex:1;padding:14px 16px;border:1px solid rgba(16,24,40,0.06);border-radius:10px;font-size:15px;background:transparent;transition:box-shadow .18s ease,border-color .18s ease}
+#todo-input:focus{outline:none;box-shadow:0 6px 18px rgba(37,99,235,0.12);border-color:var(--accent)}
+
+#todo-form button{padding:12px 16px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(37,99,235,0.12);transition:transform .12s ease,box-shadow .12s ease}
+#todo-form button:hover{transform:translateY(-2px)}
+
 #todo-list{list-style:none;padding:0;margin:0}
-.todo-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:6px;border:1px solid #f0f1f7;margin-bottom:8px}
-.todo-checkbox{width:18px;height:18px;margin-right:12px;flex:0 0 auto}
-.todo-text{flex:1;margin-right:12px}
-.todo-text.completed{text-decoration:line-through;color:#6b7280;opacity:0.85}
-.delete-btn{background:#fee2e2;color:#b91c1c;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}
-.delete-btn:focus{outline:2px solid #fca5a5}
-@media (max-width:420px){.app{padding:14px}#todo-form button{padding:8px 10px}}
+.todo-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(16,24,40,0.03);margin-bottom:10px;background:var(--card);box-shadow:0 2px 8px rgba(16,24,40,0.03);transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease}
+.todo-item:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(16,24,40,0.06)}
 
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-#theme-toggle{padding:8px 10px;border-radius:6px;border:1px solid #e6e8f0;background:transparent;cursor:pointer}
+.todo-checkbox{width:18px;height:18px;margin:0;flex:0 0 auto}
+.todo-text{flex:1;margin-right:6px;font-size:15px;color:var(--text);transition:color .18s ease,opacity .18s ease,text-decoration .18s ease}
+.todo-text.completed{text-decoration:line-through;color:var(--muted);opacity:0.9}
 
-body.dark{background:#0f1724;color:#e6eef8}
-body.dark .app{background:#071127;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
-body.dark #todo-input{border-color:#1f2937;background:transparent;color:#e6eef8}
-body.dark .todo-item{border-color:#111827;background:#071127}
-body.dark .todo-text.completed{color:#94a3b8;opacity:0.9}
-body.dark #todo-form button{background:#2563eb}
-body.dark .delete-btn{background:#3f1b1b;color:#fecaca;border:none}
+.delete-btn{background:transparent;color:var(--danger);border:1px solid rgba(239,68,68,0.12);padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600;transition:background .12s ease,color .12s ease,transform .12s ease}
+.delete-btn:hover{background:rgba(239,68,68,0.06);transform:translateY(-2px)}
+
+/* Entry animation */
+.todo-item{opacity:0;transform:translateY(6px);animation:slideIn .28s ease forwards}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Removal animation */
+.todo-item.removing{animation:fadeOut .22s ease forwards;transform-origin:right center}
+@keyframes fadeOut{to{opacity:0;transform:translateX(18px) scale(.98)}}
+
+@media (max-width:520px){.app{padding:18px}#todo-form{gap:8px}#todo-input{padding:12px}}
+
+/* Theme overrides */
+body.dark{--page-bg:#071127;--card:linear-gradient(180deg,#071127,#061025);--text:#e6eef8;--muted:#94a3b8;--accent:#1e40af;--accent-2:#4c1d95}
+body.dark{background:linear-gradient(180deg,#020617 0%, #071127 100%)}
+body.dark .app{box-shadow:0 12px 36px rgba(2,6,23,0.6)}
+body.dark .todo-item{border-color:rgba(255,255,255,0.02);background:rgba(255,255,255,0.02)}
+body.dark #todo-input{border-color:rgba(255,255,255,0.04);color:var(--text)}
+body.dark .delete-btn{border-color:rgba(239,68,68,0.12);color:var(--danger)}

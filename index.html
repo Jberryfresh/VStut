@@ -4,14 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Simple Todo App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="app">
-    <div class="header">
-    <h1>Simple Todo</h1>
-    <button id="theme-toggle" aria-label="Toggle dark mode">Toggle theme</button>
-  </div>
+    <header class="header">
+      <div class="title-group">
+        <h1>Todo</h1>
+        <p class="subtitle">Organize your tasks beautifully</p>
+      </div>
+      <button id="theme-toggle" aria-label="Toggle dark mode">Toggle</button>
+    </header>
     <form id="todo-form" aria-label="Add todo">
       <input id="todo-input" type="text" placeholder="Add a todo" autocomplete="off" required>
       <button type="submit">Add</button>
