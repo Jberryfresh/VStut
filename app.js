@@ -2,7 +2,6 @@
   const form = document.getElementById('todo-form');
   const input = document.getElementById('todo-input');
   const list = document.getElementById('todo-list');
-  const STORAGE_KEY = 'simple_todos_v1';
 
   const THEME_KEY = 'theme_pref_v1';
 
@@ -35,24 +34,51 @@
   applyTheme(loadTheme());
   if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
 
-  function loadTodos(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw? JSON.parse(raw) : [];
-    }catch(e){
-      console.error('Failed to parse todos', e);
-      return [];
-    }
+  // API helpers
+  const API_BASE = '';
+
+  async function fetchTodos(){
+    const res = await fetch(`${API_BASE}/api/todos`);
+    if(!res.ok) throw new Error('Failed to fetch');
+    return res.json();
   }
 
-  function saveTodos(todos){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  async function createTodo(text){
+    const res = await fetch(`${API_BASE}/api/todos`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text })
+    });
+    if(!res.ok) throw new Error('Failed to create');
+    return res.json();
   }
 
-  function render(){
-    const todos = loadTodos();
+  async function updateTodo(id, patch){
+    const res = await fetch(`${API_BASE}/api/todos/${id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch)
+    });
+    if(!res.ok) throw new Error('Failed to update');
+    return res.json();
+  }
+
+  async function removeTodo(id){
+    const res = await fetch(`${API_BASE}/api/todos/${id}`, { method: 'DELETE' });
+    if(!res.ok && res.status !== 204) throw new Error('Failed to delete');
+  }
+
+  async function render(){
     list.innerHTML = '';
-    if(todos.length === 0){
+    let todos = [];
+    try{
+      todos = await fetchTodos();
+    }catch(e){
+      const li = document.createElement('li');
+      li.className = 'todo-item';
+      li.textContent = 'Failed to load todos.';
+      list.appendChild(li);
+      console.error(e);
+      return;
+    }
+
+    if(!todos || todos.length === 0){
       const li = document.createElement('li');
       li.className = 'todo-item';
       li.textContent = 'No todos yet.';
@@ -66,7 +92,7 @@
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.className = 'todo-checkbox';
-      checkbox.dataset.id = todo.id;
+      checkbox.dataset.id = String(todo.id);
       checkbox.checked = !!todo.completed;
       checkbox.setAttribute('aria-label', `Mark todo ${todo.text} completed`);
 
@@ -78,7 +104,7 @@
       btn.className = 'delete-btn';
       btn.textContent = 'Delete';
       btn.setAttribute('aria-label', `Delete todo ${todo.text}`);
-      btn.dataset.id = todo.id;
+      btn.dataset.id = String(todo.id);
 
       li.appendChild(checkbox);
       li.appendChild(span);
@@ -87,50 +113,43 @@
     });
   }
 
-  function addTodo(text){
-    const todos = loadTodos();
-    const todo = { id: Date.now().toString(), text: text.trim(), completed: false };
-    todos.push(todo);
-    saveTodos(todos);
-    render();
-  }
-
-  function toggleCompleted(id){
-    const todos = loadTodos();
-    const idx = todos.findIndex(t => t.id === id);
-    if(idx === -1) return;
-    todos[idx].completed = !todos[idx].completed;
-    saveTodos(todos);
-    render();
-  }
-
-  function deleteTodo(id){
-    let todos = loadTodos();
-    todos = todos.filter(t => t.id !== id);
-    saveTodos(todos);
-    render();
-  }
-
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const value = input.value.trim();
     if(!value) return;
-    addTodo(value);
-    input.value = '';
-    input.focus();
+    try{
+      await createTodo(value);
+      input.value = '';
+      input.focus();
+      await render();
+    }catch(err){
+      console.error(err);
+      alert('Failed to add todo');
+    }
   });
 
-  list.addEventListener('click', (e) => {
+  list.addEventListener('click', async (e) => {
     const del = e.target.closest('button.delete-btn');
     if(del){
       const id = del.dataset.id;
-      if(id) deleteTodo(id);
+      const li = del.closest('li.todo-item');
+      if(li){
+        li.classList.add('removing');
+        setTimeout(async () => { if(id){ await removeTodo(id); await render(); } }, 260);
+      } else {
+        if(id){ await removeTodo(id); await render(); }
+      }
       return;
     }
     const cb = e.target.closest('input.todo-checkbox');
     if(cb){
       const id = cb.dataset.id;
-      if(id) toggleCompleted(id);
+      if(id){
+        try{
+          await updateTodo(id, { completed: cb.checked });
+          await render();
+        }catch(err){ console.error(err); }
+      }
     }
   });
 
